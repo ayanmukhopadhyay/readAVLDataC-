@@ -4,21 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Globalization;
 
 namespace avlData
 {
     class Program
     {
         static void Main(string[] args)
-        {
+        {            
             List<DateTime> avlDateTime = new List<DateTime>();
+            List<String> carNumber = new List<String>();
+            List<double> x = new List<double>();
+            List<double> y = new List<double>();
+
             //Learn how to maintain either a 2D list with different datatype columns. Or else, must iterate over the csv files in a way that dates are sorted by default 
             //get list of avl csv files
-            string[] dirs = Directory.GetFiles(@"E:\avlData");
+            string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
             for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
             {
                 String filenameCurr = dirs[counterFile];
                 var reader = new StreamReader(File.OpenRead(filenameCurr));
+                Console.Write("\n"+filenameCurr);
+                var lineCount = File.ReadLines(filenameCurr).Count();
+                Console.Write(lineCount);
                 
                 //List<string> listB = new List<string>();
                 while (!reader.EndOfStream)
@@ -26,17 +34,20 @@ namespace avlData
                     var line = reader.ReadLine();
                     try
                     {
-                        var currDateTime = Convert.ToDateTime(line.Split(';')[0].Split(',')[0]);
+                        var splitLine = line.Split(';')[0].Split(',');
+                        var currDateTime = Convert.ToDateTime(splitLine[2]);
+                        var currCarNumber = splitLine[3];
+                        var currX = Convert.ToDouble(splitLine[0]);
+                        var currY = Convert.ToDouble(splitLine[1]);
                         avlDateTime.Add(currDateTime);
+                        carNumber.Add(currCarNumber);
+                        x.Add(currX);
+                        y.Add(currY);
                     }
                     catch (System.FormatException e)
                     {
                         continue;
                     }
-
-
-                    //listA.Add(values[0]);
-                    //listB.Add(values[1]);
                 }
             }
 
