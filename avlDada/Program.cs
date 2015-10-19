@@ -16,21 +16,22 @@ namespace avlData
             List<String> carNumber = new List<String>();
             List<double> x = new List<double>();
             List<double> y = new List<double>();
-
+			//Final List to store results
+			List<List<double>> resultList = new List<List<double>>();
             //Learn how to maintain either a 2D list with different datatype columns. Or else, must iterate over the csv files in a way that dates are sorted by default 
             //get list of avl csv files
-            //string[] dirs = Directory.GetFiles(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/SurvivalAnalysis/spatioTemporalModelingUpdatedGMM/avl/statePlaneCSV/batch1/");
-            string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
-            //for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
-            for (int counterFile = 0; counterFile < 3; counterFile++)
+            string[] dirs = Directory.GetFiles(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/SurvivalAnalysis/spatioTemporalModelingUpdatedGMM/avl/statePlaneCSV/batch1/");
+            //string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
+            for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
+            //for (int counterFile = 0; counterFile < 3; counterFile++)
             {
                 String filenameCurr = dirs[counterFile];
                 if (filenameCurr.Contains(".csv"))
                 {
                     var reader = new StreamReader(File.OpenRead(filenameCurr));
-                    Console.Write("\n" + filenameCurr);
+                    //Console.Write("\n" + filenameCurr);
                     var lineCount = File.ReadLines(filenameCurr).Count();
-                    Console.Write(lineCount);
+                   //Console.Write(lineCount);
 
                     //List<string> listB = new List<string>();
                     while (!reader.EndOfStream)
@@ -53,10 +54,13 @@ namespace avlData
                             continue;
                         }
                     }
+
+					Console.Write("\n"+Convert.ToString(avlDateTime.Count));
                 }
 
             }
-
+			Console.Write("\n The size of AVL Data generated is  : " + Convert.ToString(avlDateTime.Count));
+			//Finished generating AVL Data. Now get details for the grids
             //vars
             double carCountPrior;
             double carCountPost;
@@ -67,7 +71,8 @@ namespace avlData
             double gridSize = 1609.34 * 2;
             List<double> survAnalysisRows = new List<double>();
             //read the grid inputs
-            var readerGridInput = new StreamReader(File.OpenRead(@"C:\Users\VAIO\Documents\Visual Studio 2013\Projects\readAVLDataC-\gridInputs.csv"));
+            //var readerGridInput = new StreamReader(File.OpenRead(@"C:\Users\VAIO\Documents\Visual Studio 2013\Projects\readAVLDataC-\gridInputs.csv"));
+			var readerGridInput = new StreamReader(File.OpenRead(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/C#/readAVLDataC-/gridInputs.csv"));
             while (!readerGridInput.EndOfStream)
             {
                 var line = readerGridInput.ReadLine(); //this corresponds to a grid data
@@ -75,18 +80,22 @@ namespace avlData
                 //remove the first two elements : blank as the data comes as an array of arrays
                 gridData.RemoveAt(1);
                 gridData.RemoveAt(0);
-                bool counterStartFound = true;
+                bool counterStartFound = false;
                 int counterStart = 0;
 
                 DateTime testStart = DateTime.Now;
                 int counterRows = 0;
-                foreach (String dataRaw in gridData)
-                {
+                //for (String dataRaw in gridData)
+				for (int counterRawData =0; counterRawData < gridData.Count; counterRawData++)
+				{
+					
+					
                     counterRows++;
+					counterStartFound = false;
                     //Test time for one loop
                     
                                         
-                    var data = dataRaw.Split(',');
+					var data = gridData[counterRawData].Split(',');
                     
                     //define location variables
                     double LocationX = Convert.ToDouble(data[4]);
@@ -105,9 +114,11 @@ namespace avlData
                     List<String> carsPriorGrid = new List<String>(); //new list for prior car numbers
                     List<String> carsPostGrid = new List<String>(); //new list for post car numbers
                     List<String> carsPriorNeighbor = new List<String>(); //new list for prior car numbers
-                    List<String> carsPostNeighbor = new List<String>(); //new list for post car numbers
-                    int counter;
-                    for (counter = counterStart; counter < avlDateTime.Count(); counter++)
+                    List<String> carsPostNeighbor = new List<String>(); //new list for post car numbers  
+
+					//temporary list to store results
+					List<double> temp = new List<double>(); 
+                    for (int counter = counterStart; counter < avlDateTime.Count(); counter++)
                     {
 
                         /************PRE POLICE PRESENCE*************/
@@ -142,7 +153,7 @@ namespace avlData
                             if ((gridXLower < x[counter] && gridXUpper > x[counter]) && (gridYLower < y[counter] && gridYUpper > y[counter]))
                             {
                                 //if yes, add to car prior grid
-                                carsPriorGrid.Add(carNumber[counter]);
+                                carsPostGrid.Add(carNumber[counter]);
                             }
 
                             //else check if car lies in neighboring grids
@@ -159,25 +170,25 @@ namespace avlData
                         }
                     }
 
-                    carCountPrior = carsPriorGrid.Distinct().Count();
-                    carCountPost = carsPriorGrid.Distinct().Count();
-                    carCountNeighbourPrior = carsPriorNeighbor.Distinct().Count();
-                    carCountNeighbourPost = carsPostNeighbor.Distinct().Count();
+					temp.Add(carsPriorGrid.Distinct().Count());
+					temp.Add(carsPriorGrid.Distinct().Count());
+					temp.Add(carsPriorNeighbor.Distinct().Count());
+					temp.Add(carsPostNeighbor.Distinct().Count());
+
+					resultList.Add(temp);
 
 
-
-
-                    Console.Write("The loop breaks at " + Convert.ToString(counter));
+                    //Console.Write("The loop breaks at " + Convert.ToString(counter));
                     //Test time for one loop
-                    if (counterRows == 100)
+                    if (counterRows == 1000)
                     {
-                        DateTime testEnd = DateTime.Now;
+						DateTime testEnd = DateTime.Now;
+						File.WriteAllLines("testCSharp.txt", resultList.Select(k => string.Join(",", k)));
                         var diff = (testEnd - testStart).TotalSeconds;
-                        Console.Write("Time For 2000 Loops is " + Convert.ToString(diff));
+                        Console.Write("Time For 1500 Loops is " + Convert.ToString(diff));
                         Console.ReadLine();
                         System.Environment.Exit(1);
-                    }
-                    
+                    }                    
                 }
             }
         }
