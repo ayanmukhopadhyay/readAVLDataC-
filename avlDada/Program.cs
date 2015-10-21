@@ -164,7 +164,7 @@ namespace avlData
                             }
                         }
                         //if we have gone ahead in AVL list, break the loop
-                        else if ((avlDateTime[counter] - testDateTime).TotalSeconds > 0)
+                        else if ((avlDateTime[counter] - testDateTime).TotalSeconds > 3600*4)
                         {
                             break;
                         }
