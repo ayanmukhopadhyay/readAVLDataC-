@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Globalization;
-using System.Data;
+//using System.Data;
 
 namespace avlData
 {
@@ -39,11 +39,11 @@ namespace avlData
             //Learn how to maintain either a 2D list with different datatype columns. Or else, must iterate over the csv files in a way that dates are sorted by default 
             //get list of avl csv files
              * */
-            //string[] dirs = Directory.GetFiles(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/SurvivalAnalysis/spatioTemporalModelingUpdatedGMM/avl/statePlaneCSV/batch1/");
-            string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
-            //for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
+            string[] dirs = Directory.GetFiles(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/SurvivalAnalysis/spatioTemporalModelingUpdatedGMM/avl/statePlaneCSV/batch1/");
+            //string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
+            for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
             
-            for (int counterFile = 0; counterFile < 4; counterFile++)
+            //for (int counterFile = 0; counterFile < 4; counterFile++)
             {
                 String filenameCurr = dirs[counterFile];
                 if (filenameCurr.Contains(".csv"))
@@ -86,17 +86,17 @@ namespace avlData
             
 			//Finished generating AVL Data. Now get details for the grids
             //vars
-            double carCountPrior;
-            double carCountPost;
-            double carCountNeighbourPrior;
-            double carCountNeighbourPost;
+            //double carCountPrior;
+            //double carCountPost;
+            //double carCountNeighbourPrior;
+            //double carCountNeighbourPost;
 
             Console.Write("Loaded Data Into Memory");
             double gridSize = 1609.34 * 2;
             List<double> survAnalysisRows = new List<double>();
             //read the grid inputs
-            var readerGridInput = new StreamReader(File.OpenRead(@"C:\Users\VAIO\Documents\Visual Studio 2013\Projects\readAVLDataC-\gridInputs.csv"));
-			//var readerGridInput = new StreamReader(File.OpenRead(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/C#/readAVLDataC-/gridInputs.csv"));
+            //var readerGridInput = new StreamReader(File.OpenRead(@"C:\Users\VAIO\Documents\Visual Studio 2013\Projects\readAVLDataC-\gridInputs.csv"));
+			var readerGridInput = new StreamReader(File.OpenRead(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/C#/readAVLDataC-/gridInputs.csv"));
             int gridCounter = 1;
             while (!readerGridInput.EndOfStream)
             {
@@ -113,13 +113,11 @@ namespace avlData
                 int counterRows = 0;
                 //for (String dataRaw in gridData)
 				for (int counterRawData =0; counterRawData < gridData.Count; counterRawData++)
-				{
-					
+				{				
 					
                     counterRows++;
 					counterStartFound = false;
-                    //Test time for one loop
-                    
+                    //Test time for one loop                    
                                         
 					var data = gridData[counterRawData].Split(',');
                     
@@ -197,7 +195,7 @@ namespace avlData
                     }
 
 					temp.Add(carsPriorGrid.Distinct().Count());
-					temp.Add(carsPriorGrid.Distinct().Count());
+					temp.Add(carsPostGrid.Distinct().Count());
 					temp.Add(carsPriorNeighbor.Distinct().Count());
 					temp.Add(carsPostNeighbor.Distinct().Count());
 
@@ -206,6 +204,7 @@ namespace avlData
 
                     //Console.Write("The loop breaks at " + Convert.ToString(counter));
                     //Test time for one loop
+					/*
                     if (counterRows == 1000)
                     {
 						DateTime testEnd = DateTime.Now;
@@ -214,11 +213,17 @@ namespace avlData
                         Console.Write("Time For 1500 Loops is " + Convert.ToString(diff));
                         Console.ReadLine();
                         System.Environment.Exit(1);
-                    }                    
+                    }
+                    */
                 }
+				String filename = "Csharp" + Convert.ToString(gridCounter) + ".txt";
+				File.WriteAllLines(filename, resultList.Select(k => string.Join(",", k)));
+				gridCounter++;
+
             }
         }
 
+		/*
         static DataTable parseCSVToDataTable()
         {
             string[] ColumnNames = null;
@@ -310,6 +315,7 @@ namespace avlData
             }
 
             return oDataTable;
-        }    
+        }
+        */
     }
 }
