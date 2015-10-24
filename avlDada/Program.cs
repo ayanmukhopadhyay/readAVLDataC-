@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Globalization;
-using System.Data;
+//using System.Data;
 
 namespace avlData
 {
@@ -22,7 +22,7 @@ namespace avlData
             List<String> carNumber = new List<String>();
             List<double> x = new List<double>();
             List<double> y = new List<double>();
-            List<List<double>> resultList = new List<List<double>>();
+            List<List<double>> resultList;
             /*
             foreach (DataRow row in dataTable.Rows)
             {
@@ -43,7 +43,7 @@ namespace avlData
             string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
             //for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
             
-            for (int counterFile = 0; counterFile < 4; counterFile++)
+            for (int counterFile = 0; counterFile < 5; counterFile++)
             {
                 String filenameCurr = dirs[counterFile];
                 if (filenameCurr.Contains(".csv"))
@@ -86,10 +86,10 @@ namespace avlData
             
 			//Finished generating AVL Data. Now get details for the grids
             //vars
-            double carCountPrior;
-            double carCountPost;
-            double carCountNeighbourPrior;
-            double carCountNeighbourPost;
+            //double carCountPrior;
+            //double carCountPost;
+            //double carCountNeighbourPrior;
+            //double carCountNeighbourPost;
 
             Console.Write("Loaded Data Into Memory \n");
             double gridSize = 1609.34 * 2;
@@ -100,6 +100,7 @@ namespace avlData
             int gridCounter = 1;
             while (!readerGridInput.EndOfStream)
             {
+                resultList = new List<List<double>>();//reinitialize result list for each grid
                 //Console.WriteLine(gridCounter);
                 var line = readerGridInput.ReadLine(); //this corresponds to a grid data
                 var gridData = new List<String>(line.Split('['));
@@ -113,13 +114,11 @@ namespace avlData
                 int counterRows = 0;
                 //for (String dataRaw in gridData)
 				for (int counterRawData =0; counterRawData < gridData.Count; counterRawData++)
-				{
-					
+				{				
 					
                     counterRows++;
 					counterStartFound = false;
-                    //Test time for one loop
-                    
+                    //Test time for one loop                    
                                         
 					var data = gridData[counterRawData].Split(',');
                     
@@ -195,14 +194,14 @@ namespace avlData
                             }
                         }
                         //if we have gone ahead in AVL list, break the loop
-                        else if ((avlDateTime[counter] - testDateTime).TotalSeconds > 0)
+                        else if ((avlDateTime[counter] - testDateTime).TotalSeconds > 3600*4)
                         {
                             break;
                         }
                     }
 
 					temp.Add(carsPriorGrid.Distinct().Count());
-					temp.Add(carsPriorGrid.Distinct().Count());
+					temp.Add(carsPostGrid.Distinct().Count());
 					temp.Add(carsPriorNeighbor.Distinct().Count());
 					temp.Add(carsPostNeighbor.Distinct().Count());
 
@@ -211,24 +210,25 @@ namespace avlData
 
                     //Console.Write("The loop breaks at " + Convert.ToString(counter));
                     //Test time for one loop
-                    /*
-                    if (counterRows == 1000)
-                    {
-						DateTime testEnd = DateTime.Now;
-						File.WriteAllLines("testCSharp.txt", resultList.Select(k => string.Join(",", k)));
-                        var diff = (testEnd - testStart).TotalSeconds;
-                        Console.Write("Time For 1500 Loops is " + Convert.ToString(diff));
-                        Console.ReadLine();
-                        System.Environment.Exit(1);
-                    }     
-                     */
+                    //if (counterRows == 1000)
+                    //{
+                    //    DateTime testEnd = DateTime.Now;
+                    //    File.WriteAllLines("testCSharp.txt", resultList.Select(k => string.Join(",", k)));
+                    //    var diff = (testEnd - testStart).TotalSeconds;
+                    //    Console.Write("Time For 1500 Loops is " + Convert.ToString(diff));
+                    //    Console.ReadLine();
+                    //    System.Environment.Exit(1);
+                    //}
 
-                }
+               }
+				String filename = "Csharp" + Convert.ToString(gridCounter) + ".txt";
+				File.WriteAllLines(filename, resultList.Select(k => string.Join(",", k)));
+				gridCounter++;
 
-                gridCounter++;
             }
         }
 
+		/*
         static DataTable parseCSVToDataTable()
         {
             string[] ColumnNames = null;
@@ -320,6 +320,7 @@ namespace avlData
             }
 
             return oDataTable;
-        }    
+        }
+        */
     }
 }
