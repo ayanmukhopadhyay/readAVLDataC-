@@ -91,7 +91,7 @@ namespace avlData
             double carCountNeighbourPrior;
             double carCountNeighbourPost;
 
-            Console.Write("Loaded Data Into Memory");
+            Console.Write("Loaded Data Into Memory \n");
             double gridSize = 1609.34 * 2;
             List<double> survAnalysisRows = new List<double>();
             //read the grid inputs
@@ -100,7 +100,7 @@ namespace avlData
             int gridCounter = 1;
             while (!readerGridInput.EndOfStream)
             {
-                Console.WriteLine(gridCounter);
+                //Console.WriteLine(gridCounter);
                 var line = readerGridInput.ReadLine(); //this corresponds to a grid data
                 var gridData = new List<String>(line.Split('['));
                 //remove the first two elements : blank as the data comes as an array of arrays
@@ -134,6 +134,11 @@ namespace avlData
                     double gridNeighbourXUpper = LocationX + (3 * gridSize / 2);
                     double gridNeighbourYLower = LocationY - (3 * gridSize / 2);
                     double gridNeighbourYUpper = LocationY + (3 * gridSize / 2);
+                    if (counterRawData == 0)
+                    {
+                        Console.Write("\n"+Convert.ToString(gridCounter)+",");
+                        Console.Write(Convert.ToString(gridXLower) + ","+Convert.ToString(gridXUpper));
+                    }
 
                     DateTime testDateTime = new DateTime(Convert.ToInt16(data[6]), Convert.ToInt16(data[7]), Convert.ToInt16(data[8]), Convert.ToInt16(data[9]), Convert.ToInt16(data[10].Split(']')[0]), 0);
                     //declare lists for grid cars and neighbo grid cars
@@ -206,6 +211,7 @@ namespace avlData
 
                     //Console.Write("The loop breaks at " + Convert.ToString(counter));
                     //Test time for one loop
+                    /*
                     if (counterRows == 1000)
                     {
 						DateTime testEnd = DateTime.Now;
@@ -214,8 +220,12 @@ namespace avlData
                         Console.Write("Time For 1500 Loops is " + Convert.ToString(diff));
                         Console.ReadLine();
                         System.Environment.Exit(1);
-                    }                    
+                    }     
+                     */
+
                 }
+
+                gridCounter++;
             }
         }
 
