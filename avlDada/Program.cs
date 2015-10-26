@@ -39,11 +39,11 @@ namespace avlData
             //Learn how to maintain either a 2D list with different datatype columns. Or else, must iterate over the csv files in a way that dates are sorted by default 
             //get list of avl csv files
              * */
-            //string[] dirs = Directory.GetFiles(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/SurvivalAnalysis/spatioTemporalModelingUpdatedGMM/avl/statePlaneCSV/batch1/");
-            string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
-            //for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
+            string[] dirs = Directory.GetFiles(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/SurvivalAnalysis/spatioTemporalModelingUpdatedGMM/avl/statePlaneCSV/batch1/");
+            //string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
+            for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
             
-            for (int counterFile = 0; counterFile < 5; counterFile++)
+            //for (int counterFile = 0; counterFile < 5; counterFile++)
             {
                 String filenameCurr = dirs[counterFile];
                 if (filenameCurr.Contains(".csv"))
@@ -95,8 +95,8 @@ namespace avlData
             double gridSize = 1609.34 * 2;
             List<double> survAnalysisRows = new List<double>();
             //read the grid inputs
-            var readerGridInput = new StreamReader(File.OpenRead(@"C:\Users\VAIO\Documents\Visual Studio 2013\Projects\readAVLDataC-\gridInputs.csv"));
-			//var readerGridInput = new StreamReader(File.OpenRead(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/C#/readAVLDataC-/gridInputs.csv"));
+            //var readerGridInput = new StreamReader(File.OpenRead(@"C:\Users\VAIO\Documents\Visual Studio 2013\Projects\readAVLDataC-\gridInputs.csv"));
+			var readerGridInput = new StreamReader(File.OpenRead(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/C#/readAVLDataC-/gridInputs.csv"));
             int gridCounter = 1;
             while (!readerGridInput.EndOfStream)
             {
@@ -148,64 +148,73 @@ namespace avlData
 
 					//temporary list to store results
 					List<double> temp = new List<double>(); 
-                    for (int counter = counterStart; counter < avlDateTime.Count(); counter++)
-                    {
+					if (testDateTime.Month <= 6)
+					{
+						for (int counter = counterStart; counter < avlDateTime.Count(); counter++)
+						{
 
-                        /************PRE POLICE PRESENCE*************/
-                        if ((avlDateTime[counter] - testDateTime).TotalSeconds <= 0 && Math.Abs((testDateTime - avlDateTime[counter]).TotalSeconds) < 3600 * 8)
-                        {                            
-                            if (!counterStartFound)
-                            {
-                                //Set counter Start to True
-                                counterStartFound = true;
-                                //Update counter Start
-                                counterStart = counter;
-                            }
+							/************PRE POLICE PRESENCE*************/
+							if ((avlDateTime[counter] - testDateTime).TotalSeconds <= 0 && Math.Abs((testDateTime - avlDateTime[counter]).TotalSeconds) < 3600 * 8)
+							{                            
+								if (!counterStartFound)
+								{
+									//Set counter Start to True
+									counterStartFound = true;
+									//Update counter Start
+									counterStart = counter;
+								}
 
-                            //check if car lies in grid
-                            if ((gridXLower < x[counter] && gridXUpper > x[counter]) && (gridYLower < y[counter] && gridYUpper > y[counter]))
-                            {
-                                //if yes, add to car prior grid
-                                carsPriorGrid.Add(carNumber[counter]);
-                            }
-                            
-                            //else check if car lies in neighboring grids
-                            else if ((gridNeighbourXLower < x[counter] && gridNeighbourXUpper > x[counter]) && (gridNeighbourYLower < y[counter] && gridNeighbourYUpper > y[counter]))
-                            {
-                                //if yes, addd to car neighbor grid
-                                carsPriorNeighbor.Add(carNumber[counter]);
-                            }
-                        }
-                        /************POST POLICE PRESENCE*************/
-                        else if ((avlDateTime[counter] - testDateTime).TotalSeconds > 0 && Math.Abs((testDateTime - avlDateTime[counter]).TotalSeconds) < 3600 * 4)
-                        {
-                            //check if car lies in grid
-                            if ((gridXLower < x[counter] && gridXUpper > x[counter]) && (gridYLower < y[counter] && gridYUpper > y[counter]))
-                            {
-                                //if yes, add to car prior grid
-                                carsPostGrid.Add(carNumber[counter]);
-                            }
+								//check if car lies in grid
+								if ((gridXLower < x[counter] && gridXUpper > x[counter]) && (gridYLower < y[counter] && gridYUpper > y[counter]))
+								{
+									//if yes, add to car prior grid
+									carsPriorGrid.Add(carNumber[counter]);
+								}
 
-                            //else check if car lies in neighboring grids
-                            else if ((gridNeighbourXLower < x[counter] && gridNeighbourXUpper > x[counter]) && (gridNeighbourYLower < y[counter] && gridNeighbourYUpper > y[counter]))
-                            {
-                                //if yes, addd to car neighbor grid
-                                carsPostNeighbor.Add(carNumber[counter]);
-                            }
-                        }
-                        //if we have gone ahead in AVL list, break the loop
-                        else if ((avlDateTime[counter] - testDateTime).TotalSeconds > 3600*4)
-                        {
-                            break;
-                        }
-                    }
+								//else check if car lies in neighboring grids
+								else if ((gridNeighbourXLower < x[counter] && gridNeighbourXUpper > x[counter]) && (gridNeighbourYLower < y[counter] && gridNeighbourYUpper > y[counter]))
+								{
+									//if yes, addd to car neighbor grid
+									carsPriorNeighbor.Add(carNumber[counter]);
+								}
+							}
+							/************POST POLICE PRESENCE*************/
+							else if ((avlDateTime[counter] - testDateTime).TotalSeconds > 0 && Math.Abs((testDateTime - avlDateTime[counter]).TotalSeconds) < 3600 * 4)
+							{
+								//check if car lies in grid
+								if ((gridXLower < x[counter] && gridXUpper > x[counter]) && (gridYLower < y[counter] && gridYUpper > y[counter]))
+								{
+									//if yes, add to car prior grid
+									carsPostGrid.Add(carNumber[counter]);
+								}
 
-					temp.Add(carsPriorGrid.Distinct().Count());
-					temp.Add(carsPostGrid.Distinct().Count());
-					temp.Add(carsPriorNeighbor.Distinct().Count());
-					temp.Add(carsPostNeighbor.Distinct().Count());
+								//else check if car lies in neighboring grids
+								else if ((gridNeighbourXLower < x[counter] && gridNeighbourXUpper > x[counter]) && (gridNeighbourYLower < y[counter] && gridNeighbourYUpper > y[counter]))
+								{
+									//if yes, addd to car neighbor grid
+									carsPostNeighbor.Add(carNumber[counter]);
+								}
+							}
+							//if we have gone ahead in AVL list, break the loop
+							else if ((avlDateTime[counter] - testDateTime).TotalSeconds > 3600*4)
+							{
+								break;
+							}
+						}
+						temp.Add(testDateTime.Month);
+						temp.Add(testDateTime.Day);
+						temp.Add(testDateTime.Hour);
+						temp.Add(testDateTime.Minute);
+						temp.Add(carsPriorGrid.Distinct().Count());
+						temp.Add(carsPostGrid.Distinct().Count());
+						temp.Add(carsPriorNeighbor.Distinct().Count());
+						temp.Add(carsPostNeighbor.Distinct().Count());
 
-					resultList.Add(temp);
+						resultList.Add(temp);
+
+
+					}
+                    
 
 
                     //Console.Write("The loop breaks at " + Convert.ToString(counter));
