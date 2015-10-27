@@ -39,11 +39,11 @@ namespace avlData
             //Learn how to maintain either a 2D list with different datatype columns. Or else, must iterate over the csv files in a way that dates are sorted by default 
             //get list of avl csv files
              * */
-            string[] dirs = Directory.GetFiles(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/SurvivalAnalysis/spatioTemporalModelingUpdatedGMM/avl/statePlaneCSV/batch1/");
-            //string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
-            for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
+            //string[] dirs = Directory.GetFiles(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/SurvivalAnalysis/spatioTemporalModelingUpdatedGMM/avl/statePlaneCSV/batch1/");
+            string[] dirs = Directory.GetFiles(@"D:\Vanderbilt\CERL\Data\AVL\StatePlane");
+            //for (int counterFile = 0; counterFile < dirs.Count(); counterFile++)
             
-            //for (int counterFile = 0; counterFile < 5; counterFile++)
+            for (int counterFile = 0; counterFile < 5; counterFile++)
             {
                 String filenameCurr = dirs[counterFile];
                 if (filenameCurr.Contains(".csv"))
@@ -95,8 +95,8 @@ namespace avlData
             double gridSize = 1609.34 * 2;
             List<double> survAnalysisRows = new List<double>();
             //read the grid inputs
-            //var readerGridInput = new StreamReader(File.OpenRead(@"C:\Users\VAIO\Documents\Visual Studio 2013\Projects\readAVLDataC-\gridInputs.csv"));
-			var readerGridInput = new StreamReader(File.OpenRead(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/C#/readAVLDataC-/gridInputs.csv"));
+            var readerGridInput = new StreamReader(File.OpenRead(@"C:\Users\VAIO\Documents\Visual Studio 2013\Projects\readAVLDataC-\gridInputs.csv"));
+			//var readerGridInput = new StreamReader(File.OpenRead(@"/Users/ayanmukhopadhyay/Documents/Vanderbilt/CERL/C#/readAVLDataC-/gridInputs.csv"));
             int gridCounter = 1;
             while (!readerGridInput.EndOfStream)
             {
@@ -123,8 +123,8 @@ namespace avlData
 					var data = gridData[counterRawData].Split(',');
                     
                     //define location variables
-                    double LocationX = Convert.ToDouble(data[4]);
-                    double LocationY = Convert.ToDouble(data[5]);
+                    double LocationX = Convert.ToDouble(data[5]);
+                    double LocationY = Convert.ToDouble(data[6]);
                     double gridXLower = LocationX - gridSize / 2;
                     double gridXUpper = LocationX + gridSize / 2;
                     double gridYLower = LocationY - gridSize / 2;
@@ -139,7 +139,7 @@ namespace avlData
                         Console.Write(Convert.ToString(gridXLower) + ","+Convert.ToString(gridXUpper));
                     }
 
-                    DateTime testDateTime = new DateTime(Convert.ToInt16(data[6]), Convert.ToInt16(data[7]), Convert.ToInt16(data[8]), Convert.ToInt16(data[9]), Convert.ToInt16(data[10].Split(']')[0]), 0);
+                    DateTime testDateTime = new DateTime(Convert.ToInt16(data[7]), Convert.ToInt16(data[8]), Convert.ToInt16(data[9]), Convert.ToInt16(data[10]), Convert.ToInt16(data[11].Split(']')[0]), 0);
                     //declare lists for grid cars and neighbo grid cars
                     List<String> carsPriorGrid = new List<String>(); //new list for prior car numbers
                     List<String> carsPostGrid = new List<String>(); //new list for post car numbers
